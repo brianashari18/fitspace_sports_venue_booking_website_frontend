@@ -94,19 +94,19 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-[#738FFD] rounded-lg shadow-xl w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-[85rem] h-[35rem] flex">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <div className="bg-[#738FFD] rounded-lg shadow-xl w-full max-w-7xl flex flex-col xl:flex-row h-auto xl:h-[35rem]">
         {/* Left Section */}
-        <div className="w-1/2 h-full flex flex-col justify-center items-center text-white p-8 sm:p-16 lg:p-32">
+        <div className="w-full xl:w-1/2 flex flex-col justify-center items-center text-white p-8 sm:p-16 lg:p-32">
           <h1 className="font-extrabold text-xl sm:text-3xl text-center mb-10">
             RESET PASSWORD
           </h1>
-          <p className="font-semibold text-sm sm:text-lg text-center sm:mb-16">
+          <p className="font-semibold text-sm sm:text-lg text-center sm:mb-16 pb-12">
             This password must be different than before!
           </p>
 
           <form
-            className="w-60 max-w-sm space-y-2 mb-2"
+            className="w-full max-w-xs sm:max-w-sm space-y-2 mb-2"
             onSubmit={handleSubmit}
           >
             <div className="relative flex items-center">
@@ -165,11 +165,11 @@ const ResetPassword = () => {
         </div>
 
         {/* Right Section */}
-        <div className="bg-[#cad7fdb3] rounded-2xl flex justify-center items-center w-1/3 h-3/4 mx-auto my-auto">
+        <div className="lg:bg-[#cad7fdb3] rounded-2xl flex justify-center items-center w-1/3 h-3/4 mx-auto my-auto">
           <img
             src={ResetPass}
             alt="Reset Password"
-            className="w-96 h-96 object-contain"
+            className="w-96 sm:w-80 md:w-96 h-auto object-contain"
           />
         </div>
       </div>

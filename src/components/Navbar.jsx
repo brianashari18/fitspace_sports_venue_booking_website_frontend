@@ -68,7 +68,7 @@ const Navbar = ({ user }) => {
         {isOpen && (
           <div
             ref={menuRef}
-            className="absolute top-full left-0 w-full bg-primary text-primary2 py-4 px-6 flex flex-col gap-4 shadow-md z-50"
+            className="absolute top-full left-0 w-full bg-primary text-primary2 text-center py-4 px-6 flex flex-col gap-4 shadow-md z-50"
           >
             <a href="/home" onClick={() => setIsOpen(false)}>Home</a>
             <a href="/venue" onClick={() => setIsOpen(false)}>Venue</a>

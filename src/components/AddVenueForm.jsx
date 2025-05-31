@@ -69,7 +69,7 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
     return (
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 sm:gap-0">
                 <div className="flex items-center">
                     <button
                         onClick={onCancel}
@@ -81,7 +81,7 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
                 </div>
                 <button
                     onClick={handleSubmit}
-                    className="p-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600"
+                    className="w-full sm:w-auto p-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600"
                 >
                     Done
                 </button>
@@ -89,7 +89,7 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
 
             {/* Detail Venue */}
             <div className="mb-8">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-gray-700 font-semibold mb-2">
                             Name venue
@@ -123,10 +123,10 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
                 </div>
             </div>
 
-            {/* Alamat Section */}
+            {/* Address Section */}
             <div className="bg-gray-100 rounded-lg p-4 mb-6">
                 <h3 className="text-lg font-semibold mb-4">Address</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-gray-700 font-semibold mb-2">
                             Street Name

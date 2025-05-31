@@ -121,11 +121,11 @@ const SignUp = ({ onLogin }) => {
       // console.log("asu", userData);
       const result = await registerUser(userData);
       console.log("User registered successfully:", result);
-      navigate("/sign-in"); // Redirect to the sign-in page on success
+      navigate("/sign-in");
     } catch (error) {
       console.error(error.message);
       setEmailError(error.message || "An error occurred during registration.");
-      setIsSignUp(false); // Re-enable the submit button
+      setIsSignUp(false);
     }
   };
 
@@ -162,10 +162,10 @@ const SignUp = ({ onLogin }) => {
   }, [window.location.search]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen  bg-gray-100">
-      <div className="bg-white rounded-lg shadow-xl w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-[85rem] h-[35rem] flex">
-        {/* Left Section */}
-        <div className="w-1/2 h-full bg-white rounded-l-lg flex flex-col justify-center items-center p-8 sm:p-16 lg:p-44">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+      <div className="bg-white rounded-lg shadow-xl w-full flex flex-col lg:flex-row lg:w-[64rem] xl:w-[85rem] h-auto lg:h-[35rem] sm: m-10 overflow-hidden">
+        {/* Left Form Section */}
+        <div className="w-full lg:w-1/2 bg-white lg:rounded-l-lg flex flex-col justify-center items-center p-6 sm:p-10 md:p-12 lg:p-44">
           <h1 className="font-bold text-xl sm:text-2xl text-center mb-3">
             SIGN UP
           </h1>
@@ -224,7 +224,7 @@ const SignUp = ({ onLogin }) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                 >
-                  {showPassword ? <Visibility/> : <VisibilityOff/>}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </button>
               </div>
               {passwordError && (
@@ -246,7 +246,7 @@ const SignUp = ({ onLogin }) => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                 >
-                  {showConfirmPassword ? <Visibility/> : <VisibilityOff/>}
+                  {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
                 </button>
               </div>
               {confirmPasswordError && (
@@ -274,18 +274,15 @@ const SignUp = ({ onLogin }) => {
                 onClick={handleGoogleLogin}
                 className="w-12 h-12 p-2 rounded-full bg-white hover:bg-gray-200 focus:ring-2"
               >
-                <img
-                  src={googleIcon}
-                  alt="Google logo"
-                />
+                <img src={googleIcon} alt="Google logo" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Right Section */}
-        <div className="w-1/2 bg-[#738FFD] rounded-r-lg rounded-l-[75px] h-full flex flex-col justify-center items-center p-8 sm:p-44">
-          <div className="flex flex-col justify-center items-center text-white">
+        {/* Right Welcome Section */}
+        <div className="w-full lg:w-1/2 bg-[#738FFD] lg:rounded-r-lg lg:rounded-l-[75px] flex flex-col justify-center items-center p-6 sm:p-10 md:p-12 lg:p-44">
+          <div className="flex flex-col justify-center items-center text-white text-center">
             <h1 className="font-extrabold text-3xl sm:text-4xl text-center mb-4 sm:mb-5">
               Welcome Back!
             </h1>

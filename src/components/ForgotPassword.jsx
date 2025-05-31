@@ -57,18 +57,18 @@ const ForgotPassword = () => {
 
   return (
       <EmailContext.Provider value={{ email, setEmail }}>
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-          <div className="bg-[#738FFD] rounded-lg shadow-xl w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-[85rem] h-[35rem] flex">
-            {/* Left Section */}
-            <div className="w-1/2 h-full flex flex-col justify-center items-center text-white p-8 sm:p-16 lg:p-32">
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+          <div className="bg-[#738FFD] rounded-lg shadow-xl w-full flex flex-col lg:flex-row lg:w-[64rem] xl:w-[85rem] h-auto lg:h-[35rem] sm: m-10 overflow-hidden">
+            {/* Left Form Section */}
+            <div className="w-full lg:w-1/2 bg-[#738FFD] lg:rounded-l-lg flex flex-col justify-center items-center text-white p-6 sm:p-10 md:p-12 lg:p-32">
               <h1 className="font-extrabold text-xl sm:text-3xl text-center mb-10">
                 FORGOT PASSWORD
               </h1>
-              <p className="font-semibold text-sm sm:text-lg text-center sm:mb-16">
+              <p className="font-semibold text-sm sm:text-lg text-center mb-10 sm:mb-16">
                 Enter your email account to reset your password!
               </p>
 
-              <form className="w-60 max-w-sm space-y-4 mb-2" onSubmit={handleSubmit}>
+              <form className="w-full max-w-sm space-y-4 mb-2" onSubmit={handleSubmit}>
                 <div className="flex flex-col">
                   <input
                       type="text"
@@ -82,9 +82,9 @@ const ForgotPassword = () => {
                       onChange={handleEmailChange}
                   />
                   {emailError && (
-                      <span className="text-[#E6FDA3]text-sm mt-1 pl-1">
-                    {emailError}
-                  </span>
+                      <span className="text-[#E6FDA3] text-sm mt-1 pl-1">
+                        {emailError}
+                      </span>
                   )}
                 </div>
 
@@ -112,12 +112,12 @@ const ForgotPassword = () => {
               </form>
             </div>
 
-            {/* Right Section */}
-            <div className="bg-[#cad7fdb3] rounded-2xl flex justify-center items-center w-1/3 h-3/4 mx-auto my-auto">
+            {/* Right Image Section */}
+            <div className="w-full lg:w-1/3 bg-[#cad7fdb3] lg:rounded-2xl flex justify-center items-center mx-auto my-6 lg:my-auto lg:h-3/4">
               <img
                   src={ForgotPass}
                   alt="Forgot Password"
-                  className="w-96 h-96 object-contain"
+                  className="w-full max-w-[24rem] h-auto max-h-[24rem] object-contain"
               />
             </div>
           </div>
