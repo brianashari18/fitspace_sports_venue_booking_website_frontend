@@ -1,12 +1,18 @@
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; // Adjust the base URL to match your backend setup
-
+const token = localStorage.getItem("token");
 const VenueService = {
     // Fetch all venues
     getAllVenues: async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/venues`);
+            const response = await axios.get(`${BASE_URL}/venues`,{
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            // console.log(response);
             return response.data.data;
         } catch (error) {
             console.error("Error fetching venues:", error);

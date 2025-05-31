@@ -17,8 +17,14 @@ export default function SportVenues() {
   const [activeButton, setActiveButton] = useState(null);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentVenues = filteredVenues.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredVenues.length / itemsPerPage);
+  // const currentVenues = filteredVenues.slice(indexOfFirstItem, indexOfLastItem);
+
+  const currentVenues = Array.isArray(filteredVenues)
+  ? filteredVenues.slice(indexOfFirstItem, indexOfLastItem)
+  : [];
+  // const totalPages = Math.ceil(filteredVenues.length / itemsPerPage);
+
+  const totalPages = Math.ceil((filteredVenues?.length || 0) / itemsPerPage);
   const navigate = useNavigate();
 
   const handleButtonClick = (location) => {
@@ -79,7 +85,7 @@ export default function SportVenues() {
     setActiveButton(null); // Reset active button
   };
 
-  console.log(venues)
+  // console.log(venues)
 
   return (
       <div className="min-h-screen flex flex-col bg-gray-100">

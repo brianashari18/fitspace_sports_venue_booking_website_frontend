@@ -4,9 +4,11 @@ const ProtectedRoute = () => {
     const token = localStorage.getItem("token");
     const expiredAt = localStorage.getItem("expired_at");
 
-    console.log(`EXP: ${expiredAt}`);
+    // console.log(`EXP: ${expiredAt}`);
 
-    const isTokenValid = token && expiredAt && new Date(expiredAt) > new Date();
+    // const isTokenValid = token && expiredAt && new Date(expiredAt) > new Date();
+    const isTokenValid = token && expiredAt;
+    // console.log(isTokenValid, token, expiredAt, new Date(expiredAt) > new Date())
 
     if (isTokenValid) {
         return <Outlet />;

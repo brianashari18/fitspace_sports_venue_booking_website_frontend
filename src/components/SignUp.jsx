@@ -110,7 +110,7 @@ const SignUp = ({ onLogin }) => {
       first_name: firstName,
       last_name: lastName,
       password: password,
-      confirmation_password: confirmPassword,
+      confirm_password: confirmPassword,
     };
 
     await handleRegister(userData);
@@ -118,7 +118,7 @@ const SignUp = ({ onLogin }) => {
 
   const handleRegister = async (userData) => {
     try {
-      console.log(userData);
+      // console.log("asu", userData);
       const result = await registerUser(userData);
       console.log("User registered successfully:", result);
       navigate("/sign-in"); // Redirect to the sign-in page on success

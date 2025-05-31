@@ -5,7 +5,7 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 
 export const registerUser = async (userData) => {
     try {
-        const response = await axios.post(baseUrl + '/users', userData, {
+        const response = await axios.post(baseUrl + '/users/register', userData, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -21,13 +21,21 @@ export const registerUser = async (userData) => {
 
 export const login = async (userData) => {
     try {
-        const response = await axios.post(baseUrl + '/auth/login',userData , {
+        const response = await axios.post(baseUrl + '/users/login',userData , {
             headers :{
                 'Content-Type' : 'application/json',
             }
         });
-        localStorage.setItem("token",response.data.data.token);
-        localStorage.setItem("expired_at",response.data.data.expired_at);
+
+        // console.log("Login response data:", response); // debugging
+        // const token = response.data.token;
+        localStorage.setItem("token", response.data.token);
+        // localStorage.setItem("expired_at",response.data.data.expired_at);
+
+        const expiredAt = Date.now() + 3600 * 1000; // 1 jam dari sekarang
+        console.log(expiredAt)
+        localStorage.setItem("expired_at", expiredAt);
+
         return response.data
     } catch (error){
         console.error('Error during Login ', error.response || error.message);

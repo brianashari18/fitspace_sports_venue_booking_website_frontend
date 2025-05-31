@@ -35,7 +35,7 @@ function generateWeeklySchedule(date) {
       dayName: dayName,
     });
   }
-  console.log(JSON.stringify(schedule))
+  // console.log(JSON.stringify(schedule))
 
   return schedule;
 }
