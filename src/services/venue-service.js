@@ -27,7 +27,7 @@ const VenueService = {
         try {
             const response = await axios.get(`${BASE_URL}/venues/owner`, {
                 headers: {
-                    Authorization: token,
+                    'Authorization': `Bearer ${token}`
                 },
             });
             return response.data;
@@ -46,7 +46,7 @@ const VenueService = {
             const response = await axios.post(`${BASE_URL}/venues`, venueData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: token,
+                    'Authorization': `Bearer ${token}`
                 },
             });
             return response.data;
@@ -63,7 +63,7 @@ const VenueService = {
             const response = await axios.patch(`${BASE_URL}/venues/${venuesId}/rating`, Rating, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: token,
+                    'Authorization': `Bearer ${token}`
                 },
             });
             return response.data;

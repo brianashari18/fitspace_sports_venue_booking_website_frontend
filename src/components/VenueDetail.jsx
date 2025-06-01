@@ -35,7 +35,6 @@ function generateWeeklySchedule(date) {
       dayName: dayName,
     });
   }
-  // console.log(JSON.stringify(schedule))
 
   return schedule;
 }
@@ -92,11 +91,11 @@ function ProgressBar({ value }) {
 
 export default function VenueDetail() {
   const { state } = useLocation();
-  const venue = state?.venue;
-  console.log("venue: ",venue)
+  const venue = state?.venue
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+   // !TODO : Google api key nya invalid / INvalid latitude or longitude nya
   const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${venue.latitude},${venue.longitude}&zoom=15&size=600x300&markers=${venue.latitude},${venue.longitude}&key=${import.meta.env.VITE_API_KEY}`;
 
   const [selectedField, setSelectedField] = useState("");
@@ -138,7 +137,6 @@ export default function VenueDetail() {
       scheduleDetailsByField.find((field) => field.fieldType === selectedField)
           ?.schedules || [];
 
-  console.log(scheduleDetailsByField)
   {
     /* Reviews Section */
   }
@@ -151,9 +149,9 @@ export default function VenueDetail() {
   const startIndex = (currentPage - 1) * reviewsPerPage;
   const endIndex = startIndex + reviewsPerPage;
 
-  const currentReviews = allReviews.slice(startIndex, endIndex);
+  const currentReviews = allReviews?.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(allReviews.length / reviewsPerPage);
+  const totalPages = Math.ceil(allReviews?.length / reviewsPerPage);
 
   const [isSelectReviewOpen, setIsSelectReviewOpen] = useState(false);
   const [isWriteReviewOpen, setIsWriteReviewOpen] = useState(false);
@@ -217,16 +215,17 @@ export default function VenueDetail() {
 
   const overallRating = venue.fields.length > 0
       ? venue.fields
-          .filter((field) => field.reviews.length > 0) // Only include fields with reviews
+          .filter((field) => field.reviews?.length > 0)
           .reduce((sum, field) => {
-            const totalReviews = field.reviews.length;
-            const averageFieldRating = field.reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
+            const totalReviews = field.reviews?.length;
+            const averageFieldRating = field.reviews?.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
             return sum + averageFieldRating;
           }, 0) /
-      venue.fields.filter((field) => field.reviews.length > 0).length // Divide by the count of fields with reviews
+      venue.fields.filter((field) => field.reviews?.length > 0).length // Divide by the count of fields with reviews
       : 0;
 
-  VenueService.updateRating(localStorage.getItem("token"),overallRating,venue.id)
+      // API nya belom ada
+  // VenueService.updateRating(localStorage.getItem("token"),overallRating,venue.id)
 
   // Find the price for the selected field
   const selectedFieldData = venue.fields.find(
@@ -234,8 +233,6 @@ export default function VenueDetail() {
   );
   const price = selectedFieldData ? selectedFieldData.price : 0;
 
-  console.log("Selected Field Schedules:", selectedFieldSchedules);
-  console.log("Schedule Data:", scheduleData);
 
 
   return (
@@ -243,7 +240,7 @@ export default function VenueDetail() {
         {/* Hero Section */}
         <div className="relative h-[500px]">
           <img
-              src={venue.fields.length > 0 && venue.fields[0].gallery.length > 0 ? `http://localhost:8080${venue.fields[0].gallery[0].photo_url}` : "https://staticg.sportskeeda.com/editor/2022/11/a9ef8-16681658086025-1920.jpg"}
+              src={venue.fields.length > 0 && venue.fields[0].gallery?.length > 0 ? `http://localhost:8080${venue.fields[0].gallery[0].photo_url}` : "https://staticg.sportskeeda.com/editor/2022/11/a9ef8-16681658086025-1920.jpg"}
               alt="Progresif Sport Centre"
               className="object-cover w-full h-full"
           />
@@ -315,21 +312,21 @@ export default function VenueDetail() {
                   className="p-2 border border-gray-300 rounded-lg"
                   value={selectedDate}
                   onChange={(e) => {
-                    setSelectedDate(e.target.value); // Update state
-                    console.log("Selected Date:", e.target.value); // Debug log
+                    setSelectedDate(e.target.value);
                   }}
-                  disabled={!selectedField} // Disable if no field is selected
+                  disabled={!selectedField}
               >
-                <option value="" disabled>
+                <option value="" >
                   Select Date
                 </option>
                 {selectedField &&
                     scheduleData
-                        .filter((day) =>
-                            selectedFieldSchedules.some(
-                                (s) => s.date === day.date && s.status === "available"
-                            )
-                        )
+                        // !TODO : SelectedFieldSchedules nya kosong
+                        // .filter((day) =>
+                        //     selectedFieldSchedules.some(
+                        //         (s) => s.date === day.date && s.status === "available"
+                        //     )
+                        // )
                         .map((availableDay, idx) => (
                             <option key={idx} value={availableDay.date}>
                               {availableDay.day}
@@ -343,7 +340,6 @@ export default function VenueDetail() {
                   value={selectedTime}
                   onChange={(e) => {
                     setSelectedTime(e.target.value); // Update state
-                    console.log("Selected Time:", e.target.value); // Debug log
                   }}
                   disabled={!selectedField || !selectedDate} // Disable if no field or date is selected
               >
@@ -352,11 +348,12 @@ export default function VenueDetail() {
                 </option>
                 {selectedField &&
                     selectedFieldSchedules
-                        .filter(
-                            (s) =>
-                                s.date === normalizeDate(selectedDate) && // Ensure it matches the selected date
-                                s.status === "available" // Ensure the status is "available"
-                        )
+                        // !TODO : SelectedFieldSchedules nya kosong
+                        // .filter(
+                        //     (s) =>
+                        //         s.date === normalizeDate(selectedDate) && // Ensure it matches the selected date
+                        //         s.status === "available" // Ensure the status is "available"
+                        // )
                         .map((availableSlot, idx) => (
                             <option key={idx} value={availableSlot.timeSlot}>
                               {availableSlot.timeSlot}
@@ -412,7 +409,6 @@ export default function VenueDetail() {
                           );
 
                           // Determine availability based on status
-                          console.log(`SCH: ${JSON.stringify(schedule)}`);
                           const isAvailable = schedule?.status.toLowerCase() === "available";
 
                           return (
@@ -445,9 +441,9 @@ export default function VenueDetail() {
           {/* Reviews Section */}
           <div className="mb-8 p-6 bg-white shadow-lg rounded-lg">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-2">{overallRating? overallRating : 0}</h2>
+              {/* <h2 className="text-3xl font-bold mb-2">{overallRating? overallRating : 0}</h2> */}
               <div className="flex justify-center mb-2">
-                {[...Array(5)].map((_, i) => (
+                {/* {[...Array(5)].map((_, i) => (
                     <Star
                         key={i}
                         className={`w-5 h-5 ${
@@ -456,10 +452,10 @@ export default function VenueDetail() {
                                 : "text-gray-300"
                         }`}
                     />
-                ))}
+                ))} */}
               </div>
               <p className="text-sm text-gray-500">
-                based on {allReviews.length} reviews
+                based on {allReviews?.length} reviews
               </p>
             </div>
 
@@ -467,10 +463,10 @@ export default function VenueDetail() {
             <div className="space-y-4 mb-8">
               {venue.fields.map((field) => {
                 // Calculate the average rating for the current field
-                const totalReviews = field.reviews.length;
+                const totalReviews = field.reviews?.length;
                 const averageRating =
                     totalReviews > 0
-                        ? field.reviews.reduce(
+                        ? field.reviews?.reduce(
                         (sum, review) => sum + review.rating,
                         0
                     ) / totalReviews
@@ -494,9 +490,9 @@ export default function VenueDetail() {
 
               {/* Display Current Reviews */}
               <div className="space-y-4 mb-8">
-                {currentReviews.map((review, idx) => {
-                  const fieldType = venue.fields.find(
-                      (field) => field.id === review.field_id
+                {currentReviews?.map((review, idx) => {
+                  const fieldType = venue.fields?.find(
+                      (field) => field.id === review?.field_id
                   )?.type;
 
                   return (
@@ -514,10 +510,10 @@ export default function VenueDetail() {
                           />
 
                           <div>
-                            <div className="font-medium">{review.user.first_name}</div>
+                            {/* <div className="font-medium">{review.user.first_name}</div> */}
                             <div className="text-sm text-gray-500">{fieldType}</div>
                             <div className="flex mb-1">
-                              {[...Array(5)].map((_, i) => (
+                              {/* {[...Array(5)].map((_, i) => (
                                   <Star
                                       key={i}
                                       className={`w-4 h-4 ${
@@ -526,9 +522,9 @@ export default function VenueDetail() {
                                               : "text-gray-300"
                                       }`}
                                   />
-                              ))}
+                              ))} */}
                             </div>
-                            <p className="text-sm font-medium">{review.comment}</p>
+                            {/* <p className="text-sm font-medium">{review.comment}</p> */}
                           </div>
                         </div>
                       </div>
