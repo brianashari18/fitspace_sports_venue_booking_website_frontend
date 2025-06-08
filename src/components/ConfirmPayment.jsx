@@ -78,8 +78,8 @@ const ConfirmPayment = () => {
     const bookingData2 = {
       date: date, // Pastikan formatnya sesuai dengan LocalDate (yyyy-MM-dd)
       time_slot: time, // Sesuaikan dengan properti backend
-      field_name: field, // Nama lapangan
-      price: String(totalPrice), // Konversi ke string karena di backend price bertipe String
+      type: field, // Nama lapangan
+      // price: String(totalPrice), // Konversi ke string karena di backend price bertipe String
     };
     
 
@@ -87,11 +87,12 @@ const ConfirmPayment = () => {
     try {
       setIsSubmitting(true);
       console.log("Sending booking data:", bookingData2); // Log data sebelum mengirim
-  
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/${venue.id}/bookings`, bookingData2, {
+
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/${venue.id}/bookings/create`, bookingData2, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": localStorage.getItem("token")
+          "Authorization": `Bearer ${token}`
         },
       });
   

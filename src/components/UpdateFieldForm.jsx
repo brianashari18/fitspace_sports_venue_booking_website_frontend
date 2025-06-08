@@ -38,16 +38,16 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         price: field.price || "",
         type: field.type || "",
-        images: field.gallery ? field.gallery.map((item) => item.photo_url) : [], // Existing images
+        images: field.gallery ? field.gallery.map((item) => item.photoUrl) : [], // Existing images
         newImages: [], // For newly added images
-        fieldSchedules: field.fieldSchedules || [], // Existing schedules
+        field_schedules: field.field_schedules || [], // Existing schedules
     });
 
     const [errors, setErrors] = useState({});
     const [uploading, setUploading] = useState(false);
 
     // Group schedules by date
-    const groupedSchedules = formData.fieldSchedules.reduce((acc, schedule) => {
+    const groupedSchedules = formData.field_schedules.reduce((acc, schedule) => {
         const date = schedule.schedule.date;
         if (!acc[date]) {
             acc[date] = [];
@@ -60,6 +60,7 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
     const generateWeeklySchedule = () => {
         const uniqueDates = Object.keys(groupedSchedules).sort();
         const schedule = uniqueDates.map((date) => {
+
             const day = new Date(date);
             const dayOfMonth = String(day.getDate()).padStart(2, '0');
             const month = String(day.getMonth() + 1).padStart(2, '0');
@@ -73,6 +74,8 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
                 dayName: dayName,
             };
         });
+
+
         return schedule;
     };
 
@@ -101,7 +104,7 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
                 gallery: formData.images,
                 newImages: formData.newImages,
                 removedImages,
-                fieldSchedules: formData.fieldSchedules,
+                field_schedules: formData.field_schedules,
             };
 
             await onSubmit(updatedData);
@@ -120,7 +123,7 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
     };
 
     const handleScheduleStatusChange = (scheduleId) => {
-        const updatedSchedules = formData.fieldSchedules.map((schedule) => {
+        const updatedSchedules = formData.field_schedules.map((schedule) => {
             if (schedule.id === scheduleId) {
                 schedule.status = schedule.status === "Available" ? "Not Available" : "Available";
             }
@@ -129,7 +132,7 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
 
         setFormData((prevData) => ({
             ...prevData,
-            fieldSchedules: updatedSchedules,
+            field_schedules: updatedSchedules,
         }));
     };
 
@@ -287,12 +290,14 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
                         {/* Header: Days of the Week */}
                         <div className="grid grid-cols-9 gap-2 mb-4">
                             <div className="font-medium text-center">Time</div>
-                            {scheduleData.map((day) => (
-                                <div key={day.date} className="text-center bg-[#F5F5F5] p-4 rounded-lg">
-                                    <div className="font-medium">{day.day}</div>
-                                    <div className="text-sm text-gray-500">{day.dayName}</div>
-                                </div>
-                            ))}
+                            {scheduleData.map((day) => {
+                                return (
+                                    <div key={day.date} className="text-center bg-[#F5F5F5] p-4 rounded-lg">
+                                        <div className="font-medium">{day.day}</div>
+                                        <div className="text-sm text-gray-500">{day.dayName}</div>
+                                    </div>
+                                );}
+                            )}
                         </div>
 
                         {/* Body: Time Slots */}
@@ -303,11 +308,19 @@ const UpdateFieldForm = ({ field, venueId, token, onSubmit, onCancel }) => {
                                 {/* Schedule Columns for Each Day */}
                                 {scheduleData.map((day, i) => {
                                     // Find the schedule that matches both timeSlot and date
-                                    const schedule = formData.fieldSchedules.find(
-                                        (s) =>
-                                            s.schedule.date === day.date &&
-                                            s.schedule.time_slot === slot.time
+                                    const schedule = formData.field_schedules.find(
+                                        (s) => {
+                                            const d = new Date(s.schedule.date);
+                                            const dom = String(d.getDate()).padStart(2, '0');
+                                            const m = String(d.getMonth() + 1).padStart(2, '0');
+                                            const formattedDate = `${d.getFullYear()}-${m}-${dom}`;
+
+                                            return formattedDate === day.date &&
+                                            s.schedule.time_slot === slot.time;
+                                        }
                                     );
+
+
 
                                     // Determine availability based on status
                                     const isAvailable =

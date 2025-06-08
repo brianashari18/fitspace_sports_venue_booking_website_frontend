@@ -22,7 +22,8 @@ const Order = ({ onLogout }) => {
         // Fetch schedule details for each booking
         const fetchedSchedules = {};
         for (const order of fetchedOrders) {
-          const schedule = await OrderService.getSchedule(localStorage.getItem("token"), order.id);
+          const schedule = order.schedule;
+          console.log("SC", schedule);
           fetchedSchedules[order.id] = schedule;
         }
         setSchedules(fetchedSchedules);
@@ -110,14 +111,18 @@ const Order = ({ onLogout }) => {
                 >
                   {/* Order Details */}
                   <div className="flex-1">
-                    <h2 className="text-md font-semibold text-black">{order.name}</h2>
+                    <h2 className="text-md font-semibold text-black">{order.field.venue.name} - {order.field.type}</h2>
                     {schedules[order.id] ? (
-                      <>
-                        <p className="text-gray-500 text-sm">
-                          {schedules[order.id].date} • {schedules[order.id].time_slot}
-                        </p>
-                        <p className="text-green-600 font-semibold mt-1">{order.price}</p>
-                      </>
+                        <>
+                          <p className="text-gray-500 text-sm">
+                            {new Date(schedules[order.id].date).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })} • {schedules[order.id].time_slot}
+                          </p>
+                          <p className="text-green-600 font-semibold mt-1">{order.field.price}</p>
+                        </>
                     ) : (
                       <p className="text-gray-500 text-sm">Loading schedule...</p>
                     )}

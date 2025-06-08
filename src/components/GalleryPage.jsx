@@ -5,11 +5,12 @@ import { motion } from "framer-motion";
 export default function GalleryPage() {
     const { state } = useLocation();
     const venue = state?.venue;
+    const fieldsInVenue = state?.fieldsInVenue;
 
     // Semua gambar dari semua field
-    const images = venue.fields.flatMap((field) =>
+    const images = fieldsInVenue.flatMap((field) =>
         field.gallery.map((photo) => ({
-            url: `http://localhost:8080${photo.photo_url}`,
+            url: `http://localhost:8080${photo.photoUrl}`,
             fieldType: field.type,
         }))
     );
@@ -20,7 +21,7 @@ export default function GalleryPage() {
     const [currentPage, setCurrentPage] = useState(1);
 
     // Filter gambar berdasarkan field
-    const fieldTypes = [...new Set(venue.fields.map((field) => field.type))];
+    const fieldTypes = [...new Set(fieldsInVenue.map((field) => field.type))];
     const filteredImages = filter
         ? images.filter((img) => img.fieldType === filter)
         : images;

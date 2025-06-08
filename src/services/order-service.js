@@ -8,10 +8,10 @@ const OrderService = {
         const user = localStorage.getItem("user")
         console.log(user)
         try {
-            const response = await axios.get(`${baseUrl}/bookings`, {
+            const response = await axios.get(`${baseUrl}/user/bookings/all`, {
                 headers: {
                 'Content-Type': 'application/json',
-                    'Authorization': token
+                    'Authorization': `Bearer ${token}`
             },
         });
             console.log(response.data)
@@ -45,7 +45,7 @@ const OrderService = {
         try {
             const response = await axios.patch(`${baseUrl}/bookings/${bookingId}/update`, bookingData, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });

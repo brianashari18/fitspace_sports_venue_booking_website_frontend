@@ -237,7 +237,7 @@ const MyVenue = ({onLogout, user}) => {
                         <div key={venue.id} className="bg-white rounded-lg shadow-xl mb-6">
                             <div className="relative w-full h-96 rounded-lg overflow-hidden opacity-90">
                                 <img
-                                    src={venue.fields.length > 0 && venue.fields[0].gallery.length > 0 ? `http://localhost:8080${venue.fields[0].gallery[0].photo_url}` : "https://staticg.sportskeeda.com/editor/2022/11/a9ef8-16681658086025-1920.jpg"}
+                                    src={venue.fields.length > 0 && venue.fields[0].gallery.length > 0 ? `http://localhost:8080${venue.fields[0].gallery[0].photoUrl}` : "https://staticg.sportskeeda.com/editor/2022/11/a9ef8-16681658086025-1920.jpg"}
                                     alt={venue.name}
                                     className="w-full h-full object-cover"
                                 />
@@ -365,12 +365,12 @@ const MyVenue = ({onLogout, user}) => {
                                                 </button>
 
                                                 <img
-                                                    src={`http://localhost:8080${field.gallery[0]?.photo_url}`}
+                                                    src={`http://localhost:8080${field.gallery[0]?.photoUrl}`}
                                                     alt={field.type}
                                                     className="w-full h-60 object-cover rounded mb-4"
                                                 />
                                                 <h3 className="font-bold text-lg mb-2">{field.type}</h3>
-                                                <p className="text-gray-500">Rp {field.price.toLocaleString()}</p>
+                                                <p className="text-gray-500">Rp{field.price.toLocaleString()}</p>
                                             </div>
                                         ))
                                     ) : (

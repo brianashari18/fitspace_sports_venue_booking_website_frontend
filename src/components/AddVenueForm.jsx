@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import {useEffect, useRef, useState} from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
-import addVenueIcon from "../assets/add-venue-icon.png"
+import L from 'leaflet';
 
 const AddVenueForm = ({ onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -16,11 +15,48 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
         longitude: null,
     });
 
-    const [errors, setErrors] = useState({}); // State for validation errors
+    const MapComponent = ({ latitude, longitude, setFormData }) => {
+        const mapRef = useRef(null);
+        const [markerPosition, setMarkerPosition] = useState({ lat: latitude, lng: longitude });
 
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey: import.meta.env.VITE_API_KEY, // Replace with your API key
-    });
+        useEffect(() => {
+            if (mapRef.current && !mapRef.current._leaflet_id) {
+                const map = L.map(mapRef.current).setView([latitude, longitude], 13);
+
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }).addTo(map);
+
+                const marker = L.marker([latitude, longitude]).addTo(map).bindPopup('Venue Location');
+
+                map.on('click', (e) => {
+                    const { lat, lng } = e.latlng;
+
+                    setMarkerPosition({ lat, lng });
+
+                    marker.setLatLng([lat, lng]);
+                    marker.setPopupContent(`New Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`).openPopup();
+
+                    setFormData((prev) => ({
+                        ...prev,
+                        latitude: lat,
+                        longitude: lng,
+                    }));
+                });
+
+                return () => {
+                    if (map) {
+                        map.remove();
+                    }
+                };
+            }
+        }, [latitude, longitude]); // Only run the effect on initial load or when latitude/longitude props change
+
+        return <div ref={mapRef} className="w-full h-full" />;
+    };
+
+
+    const [errors, setErrors] = useState({}); // State for validation errors
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,21 +86,6 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
 
         onSubmit(formData); // Submit data if validation passes
     };
-
-    const handleMapClick = (event) => {
-        const lat = event.latLng.lat();
-        const lng = event.latLng.lng();
-        setFormData((prev) => ({
-            ...prev,
-            latitude: lat,
-            longitude: lng,
-        }));
-        setErrors((prev) => ({ ...prev, location: "" })); // Clear error on map click
-    };
-
-    if (!isLoaded) {
-        return <p>Loading Google Maps...</p>;
-    }
 
     return (
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
@@ -215,31 +236,14 @@ const AddVenueForm = ({ onSubmit, onCancel }) => {
             <div className="bg-gray-100 rounded-lg p-4">
                 <h3 className="text-lg font-semibold mb-4">Location on Map</h3>
                 <div className="h-64 w-full bg-gray-300 rounded-lg">
-                    <GoogleMap
-                        mapContainerClassName="h-64 w-full rounded-lg"
-                        center={{
-                            lat: formData.latitude || -6.200000,
-                            lng: formData.longitude || 106.816666,
-                        }}
-                        zoom={10}
-                        onClick={handleMapClick}
-                    >
-                        {formData.latitude && formData.longitude && (
-                            <Marker
-                                position={{
-                                    lat: formData.latitude,
-                                    lng: formData.longitude,
-                                }}
-                            />
-                        )}
-                    </GoogleMap>
+                    <MapComponent latitude={formData.latitude || -6.200000} longitude={formData.longitude || 106.816666} setFormData={setFormData}/>
                 </div>
                 {errors.location && (
                     <p className="text-red-500 text-sm mt-2">{errors.location}</p>
                 )}
                 <p className="text-sm text-gray-600 mt-2">
-                    Latitude: {formData.latitude || "N/A"}, Longitude:{" "}
-                    {formData.longitude || "N/A"}
+                    Latitude: {formData.latitude?.toFixed(4) || "N/A"}, Longitude:
+                    {formData.longitude?.toFixed(4) || "N/A"}
                 </p>
             </div>
         </div>

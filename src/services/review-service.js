@@ -2,12 +2,12 @@ import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
-export const createReview = async (fieldId, reviewData, token) => {
+export const createReview = async (venueId, fieldId, reviewData, token) => {
     try {
-        const response = await axios.post(`${baseUrl}/fields/${fieldId}/reviews`, reviewData, {
+        const response = await axios.post(`${baseUrl}/${venueId}/fields/${fieldId}/addReview`, reviewData, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': `Bearer ${token}`
             },
         });
         return response.data;

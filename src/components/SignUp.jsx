@@ -130,7 +130,7 @@ const SignUp = ({ onLogin }) => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google/login`;
+    window.location.href = `${import.meta.env.VITE_BASE_URL}/users/google`;
   };
 
   const handleGoogleCallback = async (searchParams) => {

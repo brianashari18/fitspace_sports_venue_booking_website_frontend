@@ -25,11 +25,12 @@ const VenueService = {
     // Fetch all venues owned by the user
     getVenueFromAllOwner: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/venues/owner`, {
+            const response = await axios.get(`${BASE_URL}/venues-owner`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
             });
+
             return response.data;
         } catch (error) {
             console.error("Error fetching venues owned by user:", error);
@@ -43,7 +44,7 @@ const VenueService = {
     // Add a new venue
     addVenue: async (token, venueData) => {
         try {
-            const response = await axios.post(`${BASE_URL}/venues`, venueData, {
+            const response = await axios.post(`${BASE_URL}/venues/createVenue`, venueData, {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${token}`
@@ -90,9 +91,9 @@ const VenueService = {
 
     deleteVenue: async (token, venueId) => {
         const config = {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
         };
-        return await axios.delete(`${BASE_URL}/venues/${venueId}`, config);
+        return await axios.delete(`${BASE_URL}/venues/delete/${venueId}`, config);
     },
 
 };

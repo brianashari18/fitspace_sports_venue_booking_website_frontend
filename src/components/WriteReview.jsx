@@ -3,7 +3,7 @@ import profile from "../assets/profile.png";
 import { createReview } from "../services/review-service.js";
 import ReviewSuccess from "./ReviewSuccess.jsx"; // Import the success modal
 
-const WriteReview = ({ onClose, username, selectedFacility, facilityId, onSubmit }) => {
+const WriteReview = ({ onClose, username, selectedFacility, venueId, facilityId, onSubmit }) => {
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +17,7 @@ const WriteReview = ({ onClose, username, selectedFacility, facilityId, onSubmit
         try {
             setIsLoading(true);
             const reviewData = { rating, comment: review.trim() };
-            const response = await createReview(facilityId, reviewData, localStorage.getItem("token"));
+            const response = await createReview(venueId, facilityId, reviewData, localStorage.getItem("token"));
 
             console.log("Review submitted successfully:", response);
 

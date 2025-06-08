@@ -66,7 +66,7 @@ const ChangePassword = ({ onLogout, user }) => {
     };
 
     try {
-      const response = await changePassword(userData);
+      const response = await changePassword(userData, user.id);
       if (response.status === 200) {
         setSuccessMessage("Password changed successfully!"); // Set success message
         setTimeout(() => setSuccessMessage(""), 3000); // Clear the success message after 3 seconds

@@ -81,7 +81,7 @@ export const resetPassword = async (userData) => {
         await axios.patch(baseUrl + '/auth/reset-password',userData ,{
             headers :{
                 'Content-Type': 'application/json',
-                'Reset-Token' : token
+                'Reset-Token' : `Bearer ${token}`
             }
         })
         localStorage.removeItem("token")
@@ -92,15 +92,13 @@ export const resetPassword = async (userData) => {
     }
 }
 
-export const changePassword = async (userData) => {
+export const changePassword = async (userData, userId) => {
     const token = localStorage.getItem("token");
     try {
-        console.log(`TOKEN: ${token}`);
-        console.log(`DATA: ${JSON.stringify(userData)}`);
-        const response = axios.patch(baseUrl + '/auth/reset-password', userData ,{
+        const response = axios.patch(baseUrl + `/users/changePassword/${userId}`, userData ,{
             headers :{
                 'Content-Type': 'application/json',
-                'Authorization' : token
+                'Authorization' : `Bearer ${token}`
             }
         })
 

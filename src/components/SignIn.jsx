@@ -52,6 +52,7 @@ const SignIn = ({onLogin}) => {
             console.log(data.token)
             try {
                 const result = await getCurrent(data.token);
+                console.log(`RESULT ${result}`);
                 const user = result.data;
                 onLogin(user);
                 localStorage.setItem("user", JSON.stringify(user));
@@ -69,7 +70,7 @@ const SignIn = ({onLogin}) => {
 
     const handleGoogleLogin = () => {
         console.log(`URL: ${import.meta.env.VITE_BASE_URL}`)
-        window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google/login`;
+        window.location.href = `${import.meta.env.VITE_BASE_URL}/users/google`;
     };
 
     const handleGoogleCallback = async (searchParams) => {

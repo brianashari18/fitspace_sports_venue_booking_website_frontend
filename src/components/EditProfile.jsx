@@ -61,7 +61,7 @@ const EditProfile = ({ onLogout, user, onUserUpdate }) => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await updateProfile(token, profileData);
+      const response = await updateProfile(token, profileData, user.id);
 
       if (response) {
         // Update state di komponen induk

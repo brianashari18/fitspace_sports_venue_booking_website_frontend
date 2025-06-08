@@ -2,11 +2,13 @@ import { useNavigate } from "react-router-dom";
 import SelectReview from "./SelectReview"; // Ensure the correct path
 import WriteReview from "./WriteReview";
 import ReviewSuccess from "./ReviewSuccess.jsx";
-import { useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { Star } from 'lucide-react'; // Assuming lucide-react is needed for stars
 import avatar1 from '../assets/avatar1.png'; // Example avatar image import
 import { useLocation } from 'react-router-dom';
 import VenueService from "../services/venue-service.js";
+import L from 'leaflet';
+import {getAllFieldsInVenue} from "../services/field-service.js";
 
 function generateWeeklySchedule(date) {
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -94,9 +96,43 @@ export default function VenueDetail() {
   const venue = state?.venue
 
   const user = JSON.parse(localStorage.getItem("user"));
+  const [fieldsInVenue, setFieldsInVenue] = useState([]);
+  const token = localStorage.getItem("token");
 
-   // !TODO : Google api key nya invalid / INvalid latitude or longitude nya
-  const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${venue.latitude},${venue.longitude}&zoom=15&size=600x300&markers=${venue.latitude},${venue.longitude}&key=${import.meta.env.VITE_API_KEY}`;
+  useEffect(() => {
+    const fetchFields = async () => {
+      const data = await getAllFieldsInVenue(token, venue.id);
+      data.data.map(e => console.log(e));
+      setFieldsInVenue(data.data);
+    }
+
+    fetchFields();
+  }, [token, venue.id])
+
+  const MapComponent = ({ latitude, longitude }) => {
+    const mapRef = useRef(null);
+
+    useEffect(() => {
+      if (mapRef.current && !mapRef.current._leaflet_id) {
+        const map = L.map(mapRef.current).setView([latitude, longitude], 15);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        L.marker([latitude, longitude]).addTo(map);
+
+        return () => {
+          if (map) {
+            map.remove();
+          }
+        };
+      }
+    }, [latitude, longitude]);
+
+    return <div ref={mapRef} className="w-full h-full" />;
+  };
+
 
   const [selectedField, setSelectedField] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -110,16 +146,20 @@ export default function VenueDetail() {
   }
 
 
-  const handleFieldChange = (e) => setSelectedField(e.target.value);
+  const handleFieldChange = (e) => {
+    console.log("E: ",e.target.value);
+    setSelectedField(e.target.value)
+  };
 
 // Fix the logic for selectedFieldSchedules
 
-  const scheduleDetailsByField = venue.fields.map((field) => {
+  const scheduleDetailsByField = fieldsInVenue.map((field) => {
+    const flattenedFieldSchedules = field.field_schedules?.flat();
     return {
       fieldType: field.type,
       schedules:
-          field.fieldSchedules?.map((scheduleItem) => {
-            const normalizedDate = normalizeDate(scheduleItem.schedule?.date); // Normalize date safely
+          flattenedFieldSchedules?.map((scheduleItem) => {
+            const normalizedDate = normalizeDate(scheduleItem.schedule?.date);
             if (!normalizedDate) {
               console.warn(`Skipping schedule with invalid date:`, scheduleItem);
               return null; // Skip invalid schedules
@@ -134,22 +174,46 @@ export default function VenueDetail() {
   });
 
   const selectedFieldSchedules =
-      scheduleDetailsByField.find((field) => field.fieldType === selectedField)
+      scheduleDetailsByField.find((field) => {
+        return field.fieldType === selectedField;
+      })
           ?.schedules || [];
 
   {
     /* Reviews Section */
   }
+
+  const [reviews, setReviews] = useState([]);
+  useEffect(() => {
+    if (fieldsInVenue.length > 0) {
+      const reviews = fieldsInVenue.map((field) => field.reviews).flat();
+      setReviews(reviews);
+    }
+  }, [fieldsInVenue]);
+
+
+  useEffect(() => {
+    console.log(`Reviews: ${reviews.length}`);
+    reviews.map((review) => {
+      if (review.user) {
+        console.log('Review user keys:', Object.keys(review.user));  // Log the keys of user object
+      }
+    });
+  }, [reviews]);
+
   // Combine all reviews from all fields
-  const allReviews = venue.fields.flatMap((field) => field.reviews);
+  const allReviews = reviews;
 
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
   const startIndex = (currentPage - 1) * reviewsPerPage;
   const endIndex = startIndex + reviewsPerPage;
-
-  const currentReviews = allReviews?.slice(startIndex, endIndex);
+  
+  const [currentReviews, setCurrentReviews] = useState([])
+  useEffect(() => {
+    setCurrentReviews(allReviews?.slice(startIndex, endIndex));
+  }, [allReviews, endIndex, reviews, startIndex]);
 
   const totalPages = Math.ceil(allReviews?.length / reviewsPerPage);
 
@@ -178,6 +242,15 @@ export default function VenueDetail() {
   const handleReviewSubmitSuccess = () => {
     setIsWriteReviewOpen(false); // Close the WriteReview modal
     setIsSuccessModalOpen(true); // Open the success modal
+
+    // Memuat ulang data review setelah berhasil submit
+    const fetchReviews = async () => {
+      const data = await getAllFieldsInVenue(token, venue.id);
+      const reviews = data.data.map((field) => field.reviews).flat();
+      setReviews(reviews);
+    };
+
+    fetchReviews(); // Memanggil fungsi fetch ulang
   };
 
   const closeSuccessModal = () => {
@@ -213,22 +286,28 @@ export default function VenueDetail() {
     });
   };
 
-  const overallRating = venue.fields.length > 0
-      ? venue.fields
+  const overallRating = fieldsInVenue.length > 0
+      ? fieldsInVenue
           .filter((field) => field.reviews?.length > 0)
           .reduce((sum, field) => {
-            const totalReviews = field.reviews?.length;
-            const averageFieldRating = field.reviews?.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
+            // Flatten reviews untuk menghindari array dalam array
+            const flattenedReviews = field.reviews?.flat();
+
+            const totalReviews = flattenedReviews?.length;
+            const averageFieldRating =
+                flattenedReviews?.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
+
             return sum + averageFieldRating;
           }, 0) /
-      venue.fields.filter((field) => field.reviews?.length > 0).length // Divide by the count of fields with reviews
+      fieldsInVenue.filter((field) => field.reviews?.length > 0).length
       : 0;
 
-      // API nya belom ada
+
+  // API nya belom ada
   // VenueService.updateRating(localStorage.getItem("token"),overallRating,venue.id)
 
   // Find the price for the selected field
-  const selectedFieldData = venue.fields.find(
+  const selectedFieldData = fieldsInVenue.find(
       (field) => field.type === selectedField
   );
   const price = selectedFieldData ? selectedFieldData.price : 0;
@@ -240,7 +319,7 @@ export default function VenueDetail() {
         {/* Hero Section */}
         <div className="relative h-[500px]">
           <img
-              src={venue.fields.length > 0 && venue.fields[0].gallery?.length > 0 ? `http://localhost:8080${venue.fields[0].gallery[0].photo_url}` : "https://staticg.sportskeeda.com/editor/2022/11/a9ef8-16681658086025-1920.jpg"}
+              src={fieldsInVenue.length > 0 && fieldsInVenue[0].gallery?.length > 0 ? `http://localhost:8080${fieldsInVenue[0].gallery[0].photoUrl}` : "https://staticg.sportskeeda.com/editor/2022/11/a9ef8-16681658086025-1920.jpg"}
               alt="Progresif Sport Centre"
               className="object-cover w-full h-full"
           />
@@ -252,7 +331,7 @@ export default function VenueDetail() {
                 {venue.province}
               </p>
               <div className="flex flex-wrap gap-3 items-center">
-                {venue.fields.map((field, j) => (
+                {fieldsInVenue.map((field, j) => (
                     <span
                         key={j}
                         className="bg-gray-200 px-3 py-1 rounded-md text-sm"
@@ -262,7 +341,7 @@ export default function VenueDetail() {
                 ))}
                 <button
                     className="ml-3 bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600 transition"
-                    onClick={() => navigate("/gallery", {state: {venue}})}
+                    onClick={() => navigate("/gallery", {state: {venue, fieldsInVenue}})}
                 >
                   Gallery
                 </button>
@@ -279,11 +358,7 @@ export default function VenueDetail() {
             <div className="h-[300px] bg-gray-200 rounded-lg mb-6">
               <a href={`https://www.google.com/maps?q=${venue.latitude},${venue.longitude}`} target="_blank"
                  rel="noopener noreferrer">
-                <img
-                    src={mapUrl} // URL gambar peta statis
-                    alt="Location Map"
-                    className="w-full h-full object-cover rounded-lg cursor-pointer"
-                />
+                <MapComponent latitude={venue.latitude} longitude={venue.longitude} />
               </a>
             </div>
           </div>
@@ -300,7 +375,7 @@ export default function VenueDetail() {
                 <option value="" disabled>
                   Select Field
                 </option>
-                {venue.fields.map((field, i) => (
+                {fieldsInVenue.map((field, i) => (
                     <option key={i} value={field.type}>
                       {field.type}
                     </option>
@@ -322,11 +397,26 @@ export default function VenueDetail() {
                 {selectedField &&
                     scheduleData
                         // !TODO : SelectedFieldSchedules nya kosong
-                        // .filter((day) =>
-                        //     selectedFieldSchedules.some(
-                        //         (s) => s.date === day.date && s.status === "available"
-                        //     )
-                        // )
+                        .filter((day) =>
+                            selectedFieldSchedules
+                                .sort((a, b) => {
+                                  const aTime = a.timeSlot ? a.timeSlot.split(' - ')[0] : '';
+                                  const bTime = b.timeSlot ? b.timeSlot.split(' - ')[0] : '';
+
+                                  if (!aTime || !bTime) return 0;
+
+                                  const [aStartHour, aStartMinute] = aTime.split(':').map(Number);
+                                  const [bStartHour, bStartMinute] = bTime.split(':').map(Number);
+
+                                  if (aStartHour !== bStartHour) return aStartHour - bStartHour;
+
+                                  return aStartMinute - bStartMinute;
+                                })
+                                .some(
+                                (s) => s.date === day.date && s.status === "available"
+                            )
+
+                        )
                         .map((availableDay, idx) => (
                             <option key={idx} value={availableDay.date}>
                               {availableDay.day}
@@ -349,11 +439,11 @@ export default function VenueDetail() {
                 {selectedField &&
                     selectedFieldSchedules
                         // !TODO : SelectedFieldSchedules nya kosong
-                        // .filter(
-                        //     (s) =>
-                        //         s.date === normalizeDate(selectedDate) && // Ensure it matches the selected date
-                        //         s.status === "available" // Ensure the status is "available"
-                        // )
+                        .filter(
+                            (s) =>
+                                s.date === normalizeDate(selectedDate) && // Ensure it matches the selected date
+                                s.status === "available" // Ensure the status is "available"
+                        )
                         .map((availableSlot, idx) => (
                             <option key={idx} value={availableSlot.timeSlot}>
                               {availableSlot.timeSlot}
@@ -405,7 +495,9 @@ export default function VenueDetail() {
                         {scheduleData.map((day, i) => {
                           // Find the schedule that matches both timeSlot and date
                           const schedule = selectedFieldSchedules.find(
-                              (s) => s.timeSlot === slot.time && s.date === day.date
+                              (s) => {
+                                return s.timeSlot === slot.time && s.date === day.date;
+                              }
                           );
 
                           // Determine availability based on status
@@ -441,9 +533,9 @@ export default function VenueDetail() {
           {/* Reviews Section */}
           <div className="mb-8 p-6 bg-white shadow-lg rounded-lg">
             <div className="text-center mb-8">
-              {/* <h2 className="text-3xl font-bold mb-2">{overallRating? overallRating : 0}</h2> */}
+              <h2 className="text-3xl font-bold mb-2">{overallRating ? overallRating : 0}</h2>
               <div className="flex justify-center mb-2">
-                {/* {[...Array(5)].map((_, i) => (
+                {[...Array(5)].map((_, i) => (
                     <Star
                         key={i}
                         className={`w-5 h-5 ${
@@ -452,21 +544,23 @@ export default function VenueDetail() {
                                 : "text-gray-300"
                         }`}
                     />
-                ))} */}
+                ))}
               </div>
               <p className="text-sm text-gray-500">
-                based on {allReviews?.length} reviews
+                based on {allReviews.length} reviews
               </p>
             </div>
 
             {/* Rating Bars */}
             <div className="space-y-4 mb-8">
-              {venue.fields.map((field) => {
+              {fieldsInVenue.map((field) => {
+                const flattenedReviews = field.reviews?.flat();
+
                 // Calculate the average rating for the current field
-                const totalReviews = field.reviews?.length;
+                const totalReviews = flattenedReviews?.length;
                 const averageRating =
                     totalReviews > 0
-                        ? field.reviews?.reduce(
+                        ? flattenedReviews.reduce(
                         (sum, review) => sum + review.rating,
                         0
                     ) / totalReviews
@@ -490,10 +584,9 @@ export default function VenueDetail() {
 
               {/* Display Current Reviews */}
               <div className="space-y-4 mb-8">
-                {currentReviews?.map((review, idx) => {
-                  const fieldType = venue.fields?.find(
-                      (field) => field.id === review?.field_id
-                  )?.type;
+                {currentReviews.map((review, idx) => {
+                  const fieldType = fieldsInVenue
+                      .find((field) => field.id === review.field_id)?.type;
 
                   return (
                       <div
@@ -510,10 +603,10 @@ export default function VenueDetail() {
                           />
 
                           <div>
-                            {/* <div className="font-medium">{review.user.first_name}</div> */}
+                            <div className="font-medium">{review.user.first_name}</div>
                             <div className="text-sm text-gray-500">{fieldType}</div>
                             <div className="flex mb-1">
-                              {/* {[...Array(5)].map((_, i) => (
+                              {[...Array(5)].map((_, i) => (
                                   <Star
                                       key={i}
                                       className={`w-4 h-4 ${
@@ -522,9 +615,9 @@ export default function VenueDetail() {
                                               : "text-gray-300"
                                       }`}
                                   />
-                              ))} */}
+                              ))}
                             </div>
-                            {/* <p className="text-sm font-medium">{review.comment}</p> */}
+                            <p className="text-sm font-medium">{review.comment}</p>
                           </div>
                         </div>
                       </div>
@@ -575,7 +668,7 @@ export default function VenueDetail() {
           {/* SelectReview Modal */}
           {isSelectReviewOpen && (
               <SelectReview
-                  facilities={venue.fields.map((field) => ({
+                  facilities={fieldsInVenue.map((field) => ({
                     id: field.id,
                     type: field.type,
                   }))}
@@ -589,6 +682,7 @@ export default function VenueDetail() {
           {isWriteReviewOpen && (
               <WriteReview
                   onClose={closeWriteReviewModal}
+                  venueId={venue.id}
                   username={user.first_name}
                   selectedFacility={selectedFacility}
                   facilityId={facilityId}

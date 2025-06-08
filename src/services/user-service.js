@@ -99,15 +99,15 @@ export const resendCode = async (email) => {
     }
 }
 
-export const updateProfile = async (token, profileData) => {
+export const updateProfile = async (token, profileData, userId) => {
     try {
         const response = await axios.patch(
-            `${baseUrl}/users/current`,
+            `${baseUrl}/users/changeUsername/${userId}`,
             profileData,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: token,
+                    Authorization: `Bearer ${token}`,
                 },
             }
         );
