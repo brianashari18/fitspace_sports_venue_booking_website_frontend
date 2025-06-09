@@ -40,7 +40,7 @@ const MyVenue = ({onLogout, user}) => {
                 setLoading(true);
                 const token = localStorage.getItem("token");
                 const response = await VenueService.getVenueFromAllOwner(token);
-                console.log(`DATA: ${JSON.stringify(response.data)}`);
+                // console.log(`DATA: ${JSON.stringify(response.data)}`);
                 setVenueData(response.data);
             } catch (err) {
                 setError(err.message || "Failed to load venues.");
@@ -145,10 +145,10 @@ const MyVenue = ({onLogout, user}) => {
 
 
     const handleAddField = async (formData) => {
-        console.log("New Field Data for Venue ID", currentVenueId, ":", formData);
+        // console.log("New Field Data for Venue ID", currentVenueId, ":", formData);
         const token = localStorage.getItem("token");
         const result = await addField(token, currentVenueId, formData);
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
         handleCloseFieldModal();
     };
 
@@ -274,7 +274,7 @@ const MyVenue = ({onLogout, user}) => {
                                             <>
                                                 <div className="flex flex-col items-center space-y-2 w-1/3">
                                                     <span className="text-4xl font-bold text-black">
-                                                        {averageRating.toFixed(1)}
+                                                        {Number(averageRating).toFixed(1)}
                                                     </span>
                                                     <div className="flex">
                                                         {[...Array(5)].map((_, index) => (
@@ -337,6 +337,7 @@ const MyVenue = ({onLogout, user}) => {
                                                 </div>
                                             </>
                                         );
+                                        
                                     })()}
                                 </div>
 
@@ -472,3 +473,4 @@ const MyVenue = ({onLogout, user}) => {
 };
 
 export default MyVenue;
+

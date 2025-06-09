@@ -13,14 +13,14 @@ const SideBar = ({ onLogout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      await axios.delete("http://localhost:8080/api/auth/logout", {
-        headers: {
-          Authorization: token,
-        },
-      });
+    const handleLogout = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        await axios.delete("http://localhost:8080/api/users/logout", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       localStorage.removeItem("token");
       localStorage.removeItem("tokenType");
       onLogout();
