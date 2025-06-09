@@ -49,7 +49,7 @@ const SignIn = ({onLogin}) => {
 
         try {
             const data = await login({email, password});
-            console.log(data.token)
+            // console.log(data.token)
             try {
                 const result = await getCurrent(data.token);
                 const user = result.data;

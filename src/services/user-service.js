@@ -3,7 +3,7 @@ import axios from "axios";
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 export const getCurrent = async (token) => {
-    // console.log(token)
+    console.log(token)
     try {
         const response = await axios.get(baseUrl + '/users/current', {
             headers: {

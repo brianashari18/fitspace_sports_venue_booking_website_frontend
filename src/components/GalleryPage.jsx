@@ -7,8 +7,10 @@ export default function GalleryPage() {
     const venue = state?.venue;
 
     // Semua gambar dari semua field
+    console.log(venue.fields)
     const images = venue.fields.flatMap((field) =>
-        field.gallery.map((photo) => ({
+        // !TODO : Disini gallery nya gk ada di field, coba check backendnya
+        field.gallery?.map((photo) => ({
             url: `http://localhost:8080${photo.photo_url}`,
             fieldType: field.type,
         }))
@@ -20,9 +22,9 @@ export default function GalleryPage() {
     const [currentPage, setCurrentPage] = useState(1);
 
     // Filter gambar berdasarkan field
-    const fieldTypes = [...new Set(venue.fields.map((field) => field.type))];
+    const fieldTypes = [...new Set(venue.fields?.map((field) => field.type))];
     const filteredImages = filter
-        ? images.filter((img) => img.fieldType === filter)
+        ? images.filter((img) => img?.fieldType === filter)
         : images;
 
     // Pagination
@@ -64,15 +66,15 @@ export default function GalleryPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
                         className="relative group cursor-pointer"
-                        onClick={() => setSelectedImage(img.url)}
+                        onClick={() => setSelectedImage(img?.url)}
                     >
                         <img
-                            src={img.url}
+                            src={img?.url}
                             alt={`Gallery ${index}`}
                             className="w-full h-64 object-cover rounded-lg shadow-lg"
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                            <p className="text-white text-lg font-medium">{img.fieldType}</p>
+                            <p className="text-white text-lg font-medium">{img?.fieldType}</p>
                         </div>
                     </motion.div>
                 ))}

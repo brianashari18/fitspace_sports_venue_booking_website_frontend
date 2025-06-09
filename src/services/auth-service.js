@@ -27,14 +27,14 @@ export const login = async (userData) => {
             }
         });
 
-        // console.log("Login response data:", response); // debugging
+        console.log("Login response data:", response); // debugging
         // const token = response.data.token;
         localStorage.setItem("token", response.data.token);
         // localStorage.setItem("expired_at",response.data.data.expired_at);
 
-        const expiredAt = Date.now() + 3600 * 1000; // 1 jam dari sekarang
-        console.log(expiredAt)
-        localStorage.setItem("expired_at", expiredAt);
+        // const expiredAt = Date.now() + 3600 * 1000; // 1 jam dari sekarang
+        // console.log(expiredAt)
+        // localStorage.setItem("expired_at", expiredAt);
 
         return response.data
     } catch (error){

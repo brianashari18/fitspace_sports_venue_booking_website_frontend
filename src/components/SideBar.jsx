@@ -7,18 +7,25 @@ import ChangePass from "../assets/ChangePass.png";
 import LogOutIcon from "../assets/LogOutIcon.png";
 import { Menu, X } from "lucide-react";
 import axios from "axios";
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const SideBar = ({ onLogout }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
+  // const response = await axios.get(baseUrl + '/users/current', {
+  //           headers: {
+  //               'Content-Type': 'application/json',
+  //               'Authorization': `Bearer ${token}`
+  //           }
+  //       });
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete("http://localhost:8080/api/auth/logout", {
+      await axios.delete(baseUrl + '/users/logout', {
         headers: {
-          Authorization: token,
+          'Authorization': `Bearer ${token}`
         },
       });
       localStorage.removeItem("token");
