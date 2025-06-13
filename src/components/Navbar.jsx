@@ -58,7 +58,7 @@ const Navbar = ({ user }) => {
       </section>
 
       {/* Navbar Tablet/Mobile */}
-      <section className="bg-primary px-6 py-4 flex lg:hidden justify-between items-center relative">
+      <section className="bg-primary px-6 py-4 flex lg:hidden justify-between items-center relative sticky top-0 z-50">
         <a href="/home">
           <img src={logo} alt="navbar" className="w-16 h-auto object-cover" />
         </a>

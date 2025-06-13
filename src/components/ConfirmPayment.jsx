@@ -61,7 +61,7 @@ const ConfirmPayment = () => {
       alert("Harap menyetujui syarat dan ketentuan sebelum melanjutkan.");
       return;
     }
-  
+
     const bookingData = {
       venue,
       field,
@@ -74,19 +74,15 @@ const ConfirmPayment = () => {
       formData,
     };
 
-
     const bookingData2 = {
-      date: date, // Pastikan formatnya sesuai dengan LocalDate (yyyy-MM-dd)
-      time_slot: time, // Sesuaikan dengan properti backend
-      type: field, // Nama lapangan
-      // price: String(totalPrice), // Konversi ke string karena di backend price bertipe String
+      date: date,
+      time_slot: time,
+      type: field,
     };
-    
 
-  
     try {
       setIsSubmitting(true);
-      console.log("Sending booking data:", bookingData2); // Log data sebelum mengirim
+      console.log("Sending booking data:", bookingData2);
 
       const token = localStorage.getItem("token");
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/${venue.id}/bookings/create`, bookingData2, {
@@ -95,31 +91,31 @@ const ConfirmPayment = () => {
           "Authorization": `Bearer ${token}`
         },
       });
-  
-      console.log("Response data:", response.data); // Log data respons
-  
+
+      console.log("Response data:", response.data);
+
       if (response.status !== 200) {
-        console.error("Response error:", response.data); // Log error details
+        console.error("Response error:", response.data);
         throw new Error("Failed to save booking.");
       }
-  
+
       console.log("Booking successful:", response.data);
       navigate("/booking-success");
     } catch (error) {
-      console.error("Error saving booking:", error); // Log error
+      console.error("Error saving booking:", error);
       alert("Terjadi kesalahan saat menyimpan booking. Coba lagi nanti.");
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-[85rem] h-[45rem] flex">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 py-4 sm:py-6 mx-4">
+      <div className="w-full max-w-[85rem] flex flex-col lg:flex-row lg:h-[45rem]">
         {/* Left Side */}
-        <div className="w-2/3 flex flex-col items-center gap-6 py-8">
-          <div className="w-[50rem]">
-            <p className="text-lg font-semibold">
+        <div className="w-full lg:w-2/3 flex flex-col items-center gap-4 mr-2 sm:gap-6 py-6 sm:py-8">
+          <div className="w-full max-w-[50rem] px-4 sm:px-6">
+            <p className="text-base sm:text-lg font-semibold">
               1. Customer Detail and Payment Option
             </p>
             <div className="w-full h-2 bg-gray-200 rounded mt-2">
@@ -130,28 +126,28 @@ const ConfirmPayment = () => {
             </div>
           </div>
 
-          <div className="bg-[#738FFD] rounded-lg shadow-lg w-[50rem] h-[20rem] p-8 pl-12 text-white flex">
-            <div className="w-1/2 h-[16rem]">
-              <h2 className="text-xl font-bold mt-3">Booking Information</h2>
-              <div className="mt-10 text-lg font-semibold">
+          <div className="bg-[#738FFD] rounded-lg shadow-lg w-full max-w-[50rem] h-auto sm:h-[20rem] p-6 sm:p-8 pl-8 sm:pl-12 text-white flex flex-col sm:flex-row">
+            <div className="w-full sm:w-1/2 h-auto sm:h-[16rem]">
+              <h2 className="text-lg sm:text-xl font-bold mt-3">Booking Information</h2>
+              <div className="mt-6 sm:mt-10 text-base sm:text-lg font-semibold">
                 <h3>Lapangan {field}</h3>
                 <h3>{venue?.name}</h3>
               </div>
-              <div className="mt-5 text-lg font-semibold">
+              <div className="mt-4 sm:mt-5 text-base sm:text-lg font-semibold">
                 <h3>{formatDate(date)}</h3>
                 <h3>{time}</h3>
               </div>
             </div>
-            <div className="w-1/2 h-full flex justify-center items-center">
+            <div className="w-full sm:w-1/2 h-auto sm:h-full flex justify-center items-center mt-4 sm:mt-0">
               <img
                 src={PaymentIlus}
                 alt="Lapangan Futsal"
-                className="rounded-lg object-contain max-h-[14rem] max-w-[100%]"
+                className="rounded-lg object-contain max-h-[12rem] sm:max-h-[14rem] max-w-[100%]"
               />
             </div>
           </div>
 
-          <div className="w-[50rem]">
+          <div className="w-full max-w-[50rem] px-4 sm:px-6">
             <input
               type="checkbox"
               id="terms"
@@ -159,16 +155,16 @@ const ConfirmPayment = () => {
               checked={isChecked}
               onChange={handleCheckboxChange}
             />
-            <label className="text-sm text-[#475569]">
+            <label className="text-xs sm:text-sm text-[#475569]">
               Saya telah membaca dan menyetujui Syarat dan Ketentuan yang
               berlaku
             </label>
           </div>
 
-          <div className="absolute bottom-0 text-left w-[50rem]">
+          <div className="hidden lg:block w-full max-w-[50rem] px-4 sm:px-6 mt-4 sm:mt-6 text-left">
             <Link
               to="/payment"
-              className="px-6 py-3 bg-[#E6FDA3] text-black font-semibold rounded-lg shadow-md hover:bg-[#F2FA5A] transition"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-[#E6FDA3] text-black font-semibold rounded-lg shadow-md hover:bg-[#F2FA5A] transition text-sm sm:text-base"
             >
               Back
             </Link>
@@ -176,9 +172,9 @@ const ConfirmPayment = () => {
         </div>
 
         {/* Right Side */}
-        <div className="w-1/3 flex flex-col items-center gap-6 py-8">
-          <div className="w-[25rem] text-start">
-            <p className="text-lg font-semibold">
+        <div className="w-full lg:w-1/3 flex flex-col items-center gap-4 sm:gap-6 py-6 sm:py-8">
+          <div className="w-full max-w-[50rem] lg:max-w-[25rem] px-4 sm:px-6 text-start">
+            <p className="text-base sm:text-lg font-semibold">
               2. Review and Confirm Payment
             </p>
             <div className="w-full h-2 bg-gray-200 rounded mt-2">
@@ -189,15 +185,15 @@ const ConfirmPayment = () => {
             </div>
           </div>
 
-          <div className="bg-[#738FFD] rounded-lg shadow-lg w-[25rem] h-[20rem] p-6 text-white">
-            <h2 className="text-lg font-bold mb-4">Payment Details</h2>
-            <div className="mb-4">
-              <p className="text-sm">
+          <div className="bg-[#738FFD] rounded-lg shadow-lg w-full max-w-[50rem] lg:max-w-[25rem] h-auto sm:h-[20rem] p-4 sm:p-6 text-white">
+            <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Payment Details</h2>
+            <div className="mb-3 sm:mb-4">
+              <p className="text-xs sm:text-sm">
                 {selectedPaymentMethod?.category} {selectedPaymentMethod?.method}
               </p>
-              <p className="text-xl font-semibold">{getVirtualAccountNumber(selectedPaymentMethod)}</p>
+              <p className="text-lg sm:text-xl font-semibold">{getVirtualAccountNumber(selectedPaymentMethod)}</p>
             </div>
-            <div className="text-sm">
+            <div className="text-xs sm:text-sm">
               <div className="flex justify-between mb-2">
                 <span>Price</span>
                 <span>{price}</span>
@@ -206,35 +202,43 @@ const ConfirmPayment = () => {
                 <span>Tax Fee 12%</span>
                 <span>{taxPrice}</span>
               </div>
-              <div className="flex justify-between font-bold text-lg mt-4">
+              <div className="flex justify-between font-bold text-base sm:text-lg mt-3 sm:mt-4">
                 <span>Total</span>
                 <span>{totalPrice}</span>
               </div>
             </div>
           </div>
 
-          <div className="w-[25rem]">
-            <h3 className="text-black font-semibold text-base mb-2">
+          <div className="w-full max-w-[50rem] lg:max-w-[25rem] px-4 sm:px-6">
+            <h3 className="text-black font-semibold text-sm sm:text-base mb-2">
               Venue Terms and Condition
             </h3>
-            <ul className="text-sm text-[#475569] list-disc pl-5">
+            <ul className="text-xs sm:text-sm text-[#475569] list-disc pl-5">
               <li>Reschedule hanya bisa dilakukan sebelum H-3 Jadwal Main.</li>
               <li>Dilarang merokok dalam lapangan.</li>
               <li>Wajib menjaga kebersihan lingkungan di dalam area venue.</li>
             </ul>
           </div>
 
-          <div className="absolute bottom-0 text-right w-[25rem]">
+          <div className="w-full max-w-[50rem] px-4 sm:px-6 mt-4 sm:mt-6 text-left">
+            <Link
+              to="/payment"
+              className="block lg:hidden w-full sm:w-auto text-center px-4 sm:px-6 py-2 sm:py-3 bg-[#E6FDA3] text-black font-semibold rounded-lg shadow-md hover:bg-[#F2FA5A] transition text-sm sm:text-base"
+            >
+              Back
+            </Link>
+          </div>
+          <div className="w-full max-w-[50rem] lg:max-w-[25rem] px-4 sm:px-6 mt-4 sm:mt-6 text-right">
             <button
               onClick={handleNext}
               disabled={isSubmitting}
-              className={`px-6 py-3 font-semibold rounded-lg shadow-md transition ${
+              className={`block lg:w-auto lg:ml-auto w-full px-4 sm:px-6 py-2 sm:py-3 font-semibold rounded-lg shadow-md transition text-sm sm:text-base ${
                 isSubmitting
                   ? "bg-gray-300 text-gray-600"
                   : "bg-[#E6FDA3] text-black hover:bg-[#F2FA5A]"
               }`}
             >
-              {isSubmitting ? "Next" : "Next"}
+              {isSubmitting ? "Processing..." : "Next"}
             </button>
           </div>
         </div>
