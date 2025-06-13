@@ -83,21 +83,26 @@ const ChangePassword = ({ onLogout, user }) => {
   };
 
   return (
-      <div className="flex justify-start h-screen bg-[#F5F5F5]">
+      // <div className="flex justify-start h-screen bg-[#F5F5F5]">
+      <div className="flex flex-col sm:flex-row min-h-screen bg-[#F5F5F5]">
         {/*Menu*/}
         <SideBar onLogout={onLogout} />
 
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-black text-start mb-6 ml-36">
+        {/* <div className="p-6">
+          <h1 className="text-2xl font-bold text-black text-start mb-6 ml-36"> */}
+          <div className="p-6 w-full">
+            <h1 className="text-2xl font-bold text-black text-start mb-6">
             Change Password
           </h1>
-          <div className="bg-white rounded-lg shadow-xl w-full sm:w-2/4 md:w-1/3 lg:w-1/2 xl:w-[60rem] h-[40rem] flex flex-wrap ml-36">
-            <div className="w-full h-48 border-b-[1px] border-gray-900 border-opacity-35 shadow-lg p-6 flex items-center">
+          {/* <div className="bg-white rounded-lg shadow-xl w-full sm:w-2/4 md:w-1/3 lg:w-1/2 xl:w-[60rem] h-[40rem] flex flex-wrap ml-36"> */}
+          <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6">
+            {/* <div className="w-full h-48 border-b-[1px] border-gray-900 border-opacity-35 shadow-lg p-6 flex items-center"> */}
+            <div className="w-full border-b border-gray-900 border-opacity-35 shadow-lg p-6 flex flex-col sm:flex-row items-center gap-4 mb-6">
               {/* Profile Image */}
               <img
                   src={Profile}
                   alt="Profile"
-                  className="w-28 h-28 ml-16"
+                  className="w-24 h-24 rounded-full object-cover"
               />
 
               {/* User Details */}
