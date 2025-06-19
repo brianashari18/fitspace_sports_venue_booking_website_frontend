@@ -16,9 +16,9 @@ const SideBar = ({ onLogout }) => {
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete("http://localhost:8080/api/auth/logout", {
+      await axios.delete("http://localhost:8080/api/users/logout", {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
       localStorage.removeItem("token");

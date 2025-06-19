@@ -74,6 +74,7 @@ const SignIn = ({onLogin}) => {
     };
 
     const handleGoogleCallback = async (searchParams) => {
+        console.log("TEST");
         const token = searchParams.get("token");
         const expiredAt = searchParams.get("expired_at");
 
