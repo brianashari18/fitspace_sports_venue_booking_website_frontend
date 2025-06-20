@@ -6,7 +6,9 @@ const adminService = {
     // Fetch all users
     getAllUsers: async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/users`);
+            const response = await axios.get(`${BASE_URL}/users`, {headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }});
             return response.data.data; // Assuming the response contains a `data` field with user data
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -30,7 +32,7 @@ const adminService = {
         try {
             const response = await axios.get(`${BASE_URL}/venues`, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             return response.data.data; // Assuming the response contains a `data` field with venue data
@@ -42,10 +44,10 @@ const adminService = {
 
     createVenue: async (venueData, token) => {
         try {
-            const response = await axios.post(`${BASE_URL}/venues`, venueData, {
+            const response = await axios.post(`${BASE_URL}/venues/createVenue`, venueData, {
                 headers: {
                     "Content-Type": "application/json",
-                    'Authorization': token, // Ensure the token is passed here
+                    'Authorization': `Bearer ${token}`, // Ensure the token is passed here
                 },
             });
             return response.data.data;
@@ -58,9 +60,9 @@ const adminService = {
     // Update an existing venue
     updateVenue: async (venueId, venueData, token) => {
         try {
-            const response = await axios.patch(`${BASE_URL}/venues/${venueId}/update`, venueData, {
+            const response = await axios.patch(`${BASE_URL}/venues/update/${venueId}`, venueData, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
@@ -74,10 +76,10 @@ const adminService = {
     // Delete a venue by ID
     deleteVenue: async (venueId, token) => {
         try {
-            const response = await axios.delete(`${BASE_URL}/venues/${venueId}/delete`, {
+            const response = await axios.delete(`${BASE_URL}/venues/delete/${venueId}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             return response.data;
@@ -92,7 +94,7 @@ const adminService = {
         try {
             const response = await axios.get(`${BASE_URL}/fields`, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             return response.data.data; // Assuming the response contains a `data` field with field data
@@ -124,9 +126,10 @@ const adminService = {
         try {
             const response = await axios.get(`${BASE_URL}/reviews`, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
+            console.log(response.data.data);
             return response.data.data; // Assuming the response contains a `data` field with reviews data
         } catch (error) {
             console.error('Error fetching reviews:', error);
@@ -170,9 +173,9 @@ const adminService = {
     // Fetch all bookings
     getAllBookings: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/bookings/all`, {
+            const response = await axios.get(`${BASE_URL}/user/bookings/all`, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             return response.data.data;

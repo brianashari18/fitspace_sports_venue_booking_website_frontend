@@ -7,15 +7,21 @@ const AdminVerification = () => {
 
     console.log(`EXP: ${expiredAt}`);
     console.log(`user: ${user}`)
-    console.log(`user: ${user.role}`)
+    console.log(`user role: ${user.role}`)
     console.log(`user: ${user.first_name}`)
 
-    const isTokenValid = token && expiredAt && new Date(expiredAt) > new Date();
+    // const isTokenValid = token && expiredAt && new Date(expiredAt) > new Date();
 
-    if (isTokenValid && user.role === "admin") {
+    // if (isTokenValid && user.role === "admin") {
+    //     return <Outlet />;
+    // } else {
+    //     return <Navigate to="/home" />;
+    // }
+
+    if (user.role === "admin") {
         return <Outlet />;
     } else {
-        return <Navigate to="/home" />;
+        return <Navigate to="/home" />
     }
 };
 
